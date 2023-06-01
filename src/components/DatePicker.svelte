@@ -25,6 +25,7 @@
   export let night = 19;
   export let minuteStep = 5;
   export let continueText = "Continue";
+  export let cancelText = "Cancel";
 
   const dispatch = createEventDispatcher();
 
@@ -166,7 +167,7 @@
           config.isRangePicker && isSelectingFirstDate.update((v) => !v);
         }}
       />
-      <Toolbar {continueText} on:close={close} />
+      <Toolbar {continueText} {cancelText} on:close={close} />
     </div>
   </Popover>
 </div>

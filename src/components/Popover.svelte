@@ -1,103 +1,134 @@
 <script>
-  import { onMount, createEventDispatcher, getContext, tick } from 'svelte'
-  import { contextKey } from './lib/context.js'
-  import { getPosition } from './lib/positioning.js'
-  import { once } from './lib/event-handling.js'
+  import { onMount, createEventDispatcher, getContext, tick } from "svelte";
+  import { contextKey } from "./lib/context.js";
+  import { getPosition } from "./lib/positioning.js";
+  import { once } from "./lib/event-handling.js";
 
-  const { isOpen, isClosing, config, resetView } = getContext(contextKey)
-  const dispatch = createEventDispatcher()
+  const { isOpen, isClosing, config, resetView } = getContext(contextKey);
+  const dispatch = createEventDispatcher();
 
-  let popover
-  let w
-  let triggerContainer
-  let contentsAnimated
-  let contentsWrapper
-  let isFullscreen = false
-  let translateY = 0
-  let translateX = 0
+  let popover;
+  let w;
+  let triggerContainer;
+  let contentsAnimated;
+  let contentsWrapper;
+  let isFullscreen = false;
+  let translateY = 0;
+  let translateX = 0;
 
-  export let trigger
+  export let trigger;
 
-  export function close () {
-    isClosing.set(true)
-    once(contentsAnimated, 'animationend', () => {
-      isClosing.set(false)
-      isOpen.set(false)
-      dispatch('closed')
-    })
+  export function close() {
+    isClosing.set(true);
+    once(contentsAnimated, "animationend", () => {
+      isClosing.set(false);
+      isOpen.set(false);
+      dispatch("closed");
+    });
   }
 
-  function checkForFocusLoss (evt) {
-    if (!$isOpen) return
-    let el = evt.target
+  function checkForFocusLoss(evt) {
+    if (!$isOpen) return;
+    let el = evt.target;
     do {
       if (el === popover) {
-        return
+        return;
       }
-      el = el.parentNode
-    } while (el)
-    close()
+      el = el.parentNode;
+    } while (el);
+    close();
   }
 
   onMount(() => {
-    config.closeOnFocusLoss && document.addEventListener('click', checkForFocusLoss)
-    if (!trigger) { return }
-    triggerContainer.appendChild(trigger.parentNode.removeChild(trigger))
+    config.closeOnFocusLoss &&
+      document.addEventListener("click", checkForFocusLoss);
+    if (!trigger) {
+      return;
+    }
+    triggerContainer.appendChild(trigger.parentNode.removeChild(trigger));
 
     return () => {
-      config.closeOnFocusLoss && document.removeEventListener('click', checkForFocusLoss)
-    }
-  })
+      config.closeOnFocusLoss &&
+        document.removeEventListener("click", checkForFocusLoss);
+    };
+  });
 
-  const doOpen = async e => {
-    isOpen.set(true)
-    resetView()
+  const doOpen = async (e) => {
+    isOpen.set(true);
+    resetView();
 
-    await tick()
-    const { top, left, fullscreen } = getPosition(window, e, config)
-    isFullscreen = fullscreen
+    await tick();
+    const { top, left, fullscreen } = getPosition(window, e, config);
+    isFullscreen = fullscreen;
 
-    translateY = top
-    translateX = left
+    translateY = top;
+    translateX = left;
 
-    dispatch('opened')
-  }
+    dispatch("opened");
+  };
 </script>
 
 <svelte:window bind:innerWidth={w} />
 <div class="sc-popover" bind:this={popover}>
   <div class="trigger" on:click={doOpen} bind:this={triggerContainer}>
-    <slot name="trigger">
-    </slot>
+    <slot name="trigger" />
   </div>
-  <div 
-    class="contents-wrapper" 
+  <div
+    class="contents-wrapper"
     class:visible={$isOpen}
     class:shrink={$isClosing}
     class:is-fullscreen={isFullscreen}
-    style="top: {translateY}px; left: {translateX}px" 
-    bind:this={contentsWrapper}>
+    style="top: {translateY}px; left: {translateX}px"
+    bind:this={contentsWrapper}
+  >
     <div class="wrapper" bind:this={contentsAnimated}>
       <div class="contents-inner">
-        <slot name="contents"></slot>
+        <div class="flex justify-end p-4">
+          <button
+            class="border rounded-full h-8 w-8 text-lg"
+            on:click={() => {
+              close();
+            }}
+          >
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="h-5 w-5 inline-block"
+              ><line x1="18" y1="6" x2="6" y2="18" /><line
+                x1="6"
+                y1="6"
+                x2="18"
+                y2="18"
+              /></svg
+            >
+          </button>
+        </div>
+
+        <slot name="contents" />
       </div>
     </div>
   </div>
 </div>
 
 <style>
-  .sc-popover { 
+  .sc-popover {
     position: relative;
   }
 
-  .contents-wrapper { 
+  .contents-wrapper {
     position: fixed;
     transition: none;
     z-index: 2;
     display: none;
   }
 
-  .contents-wrapper.visible { 
+  .contents-wrapper.visible {
     display: block;
   }
 
@@ -109,65 +140,65 @@
     overflow: scroll;
   }
 
-  .contents-wrapper.visible .wrapper { 
-    opacity: 1; 
+  .contents-wrapper.visible .wrapper {
+    opacity: 1;
     transform: scale(1);
     display: block;
   }
-  
-  .contents-wrapper.shrink .wrapper { 
-    animation: shrink 150ms forwards cubic-bezier(.92,.09,.18,1.05);
+
+  .contents-wrapper.shrink .wrapper {
+    animation: shrink 150ms forwards cubic-bezier(0.92, 0.09, 0.18, 1.05);
   }
 
-  .wrapper { 
+  .wrapper {
     background: #fff;
-    box-shadow: 0px 10px 26px rgba(0,0,0,0.4) ;
-    opacity: .8; 
+    box-shadow: 0px 10px 26px rgba(0, 0, 0, 0.4);
+    opacity: 0.8;
     padding-top: 0;
     display: none;
-    animation: grow 200ms forwards cubic-bezier(.92,.09,.18,1.05);
+    animation: grow 200ms forwards cubic-bezier(0.92, 0.09, 0.18, 1.05);
   }
 
-  .contents-inner { 
+  .contents-inner {
     animation: fadeIn 400ms forwards;
   }
 
-  @keyframes grow { 
-    0% { 
-      transform: scale(.9,.1); 
-      opacity: 0; 
+  @keyframes grow {
+    0% {
+      transform: scale(0.9, 0.1);
+      opacity: 0;
     }
-    30% { 
-      opacity: 1; 
+    30% {
+      opacity: 1;
     }
-    100% { 
+    100% {
       transform: scale(1);
     }
   }
 
-  @keyframes shrink { 
-    0% { 
-      transform: scale(1); 
-      opacity: 1; 
+  @keyframes shrink {
+    0% {
+      transform: scale(1);
+      opacity: 1;
     }
-    70% { 
-      opacity: 1; 
+    70% {
+      opacity: 1;
     }
-    100% { 
-      opacity: 0; 
-      transform: scale(.9,.1);
+    100% {
+      opacity: 0;
+      transform: scale(0.9, 0.1);
     }
   }
 
-  @keyframes fadeIn { 
-    0% { 
-      opacity: 0; 
-    }
-    50% { 
+  @keyframes fadeIn {
+    0% {
       opacity: 0;
     }
-    100% { 
-      opacity: 1; 
+    50% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
     }
   }
 </style>
