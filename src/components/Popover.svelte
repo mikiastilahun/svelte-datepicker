@@ -3,6 +3,7 @@
   import { contextKey } from "./lib/context.js";
   import { getPosition } from "./lib/positioning.js";
   import { once } from "./lib/event-handling.js";
+  import { clickOutside } from "./actions/click-outside.js";
 
   const { isOpen, isClosing, config, resetView } = getContext(contextKey);
   const dispatch = createEventDispatcher();
@@ -78,10 +79,13 @@
     class:visible={$isOpen}
     class:shrink={$isClosing}
     class:is-fullscreen={isFullscreen}
-    style="top: {translateY}px; left: {translateX}px"
     bind:this={contentsWrapper}
   >
-    <div class="wrapper" bind:this={contentsAnimated}>
+    <div
+      class="wrapper"
+      bind:this={contentsAnimated}
+      use:clickOutside={() => isOpen.set(false)}
+    >
       <div class="contents-inner">
         <div class="flex justify-end p-4">
           <button
@@ -122,14 +126,21 @@
   }
 
   .contents-wrapper {
+    padding: 16px;
     position: fixed;
     transition: none;
+    justify-content: center;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    transform: translate3d(0, 0, 0);
     z-index: 2;
+    inset: 0;
     display: none;
   }
 
   .contents-wrapper.visible {
-    display: block;
+    display: flex;
   }
 
   .contents-wrapper.visible.is-fullscreen {
