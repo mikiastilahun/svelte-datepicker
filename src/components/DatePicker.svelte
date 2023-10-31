@@ -158,15 +158,17 @@
           <View viewContextKey={endContextKey} on:chosen={addDate} />
         {/if}
       </div>
-      <CommonlyUsedFitlers
-        on:commonFilterSelected={(e) => {
-          selectedStartDate.set(dayjs(e.detail.start));
-          selectedEndDate.set(dayjs(e.detail.end));
+      <div class="commonlyUsedFilter">
+        <CommonlyUsedFitlers
+          on:commonFilterSelected={(e) => {
+            selectedStartDate.set(dayjs(e.detail.start));
+            selectedEndDate.set(dayjs(e.detail.end));
 
-          swapDatesIfRequired();
-          config.isRangePicker && isSelectingFirstDate.update((v) => !v);
-        }}
-      />
+            swapDatesIfRequired();
+            config.isRangePicker && isSelectingFirstDate.update((v) => !v);
+          }}
+        />
+      </div>
       <Toolbar {continueText} {cancelText} on:close={close} />
     </div>
   </Popover>
@@ -214,6 +216,10 @@
     align-items: center;
   }
 
+  .commonlyUsedFilter {
+    max-height: 500px;
+    overflow-y: scroll;
+  }
   @media (min-width: 680px) {
     .view {
       flex-direction: row;
