@@ -32,7 +32,7 @@
     },
     "last month": {
       start: dayjs().startOf("month").subtract(1, "month"),
-      end: dayjs().endOf("month").subtract(1, "month"),
+      end: dayjs().endOf("month").subtract(2, "month").endOf("month"),
     },
     "this quarter": {
       start: dayjs().startOf("quarter"),
