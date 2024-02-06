@@ -1,7 +1,7 @@
 {
   "name": "svelte-datepicker-forked",
   "svelte": "src/main.js",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "license": "MIT",
   "scripts": {
     "dev": "snowpack dev",

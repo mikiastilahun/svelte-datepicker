@@ -2,11 +2,21 @@
   import dayjs from "dayjs";
 
   import quarterOfYear from "dayjs/plugin/quarterOfYear";
+  import updateLocale from "dayjs/plugin/updateLocale";
+
   dayjs.extend(quarterOfYear);
+
+  dayjs.extend(updateLocale);
 
   import { createEventDispatcher } from "svelte";
 
   const dispatch = createEventDispatcher();
+
+  export let weekStart = 0;
+
+  dayjs.updateLocale("en", {
+    weekStart: weekStart,
+  });
 
   let filters = {
     today: {

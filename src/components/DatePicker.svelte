@@ -26,6 +26,7 @@
   export let minuteStep = 5;
   export let continueText = "Continue";
   export let cancelText = "Cancel";
+  export let weekStart = 0;
 
   const dispatch = createEventDispatcher();
 
@@ -160,6 +161,7 @@
       </div>
       <div class="commonlyUsedFilter">
         <CommonlyUsedFitlers
+          {weekStart}
           on:commonFilterSelected={(e) => {
             selectedStartDate.set(dayjs(e.detail.start));
             selectedEndDate.set(dayjs(e.detail.end));
