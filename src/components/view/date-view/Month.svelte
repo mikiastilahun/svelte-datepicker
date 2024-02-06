@@ -1,44 +1,48 @@
 <script>
-  import Week from './Week.svelte'
-  import { getContext } from 'svelte'
-  import { dayjs } from '../../lib/date-utils.js'
+  import Week from "./Week.svelte";
+  import { getContext } from "svelte";
+  import updateLocale from "dayjs/plugin/updateLocale";
 
-  export let viewContextKey
-  export let id
+  import { dayjs } from "../../lib/date-utils.js";
 
-  const { monthView } = getContext(viewContextKey)
+  dayjs.extend(updateLocale);
 
-  let lastId = id
-  let direction
+  export let viewContextKey;
+  export let id;
+
+  const { monthView } = getContext(viewContextKey);
+
+  let lastId = id;
+  let direction;
 
   $: {
-    direction = lastId < id ? 1 : -1
-    lastId = id
+    direction = lastId < id ? 1 : -1;
+    lastId = id;
   }
+  export let weekStart = 0;
+
+  dayjs.updateLocale("en", {
+    weekStart: weekStart,
+  });
 </script>
 
 <div class="month-container">
   <div class="month-dates">
     <div class="legend">
       <div class="month-week">
-        {#each dayjs.weekdaysShort() as day}
+        {#each dayjs.weekdaysShort(true) as day}
           <span>{day}</span>
         {/each}
       </div>
     </div>
     {#each $monthView.visibleMonth.weeks as week (week.id)}
-      <Week
-        {viewContextKey}
-        days={week.days}
-        {direction}
-        on:chosen
-      />
+      <Week {viewContextKey} days={week.days} {direction} on:chosen />
     {/each}
   </div>
 </div>
 
 <style>
-  .month-dates { 
+  .month-dates {
     width: 100%;
     display: -ms-grid;
     display: grid;

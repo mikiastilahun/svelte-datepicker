@@ -156,7 +156,11 @@
       <div class="view">
         <View viewContextKey={startContextKey} on:chosen={addDate} />
         {#if config.isRangePicker}
-          <View viewContextKey={endContextKey} on:chosen={addDate} />
+          <View
+            viewContextKey={endContextKey}
+            on:chosen={addDate}
+            {weekStart}
+          />
         {/if}
       </div>
       <div class="commonlyUsedFilter">
