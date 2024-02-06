@@ -154,7 +154,11 @@
       class:is-range-picker={config.isRangePicker}
     >
       <div class="view">
-        <View viewContextKey={startContextKey} on:chosen={addDate} />
+        <View
+          viewContextKey={startContextKey}
+          on:chosen={addDate}
+          {weekStart}
+        />
         {#if config.isRangePicker}
           <View
             viewContextKey={endContextKey}
