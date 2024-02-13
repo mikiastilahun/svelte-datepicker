@@ -1,5 +1,6 @@
 <script>
   import dayjs from "dayjs";
+  import { getContext } from "svelte";
 
   import quarterOfYear from "dayjs/plugin/quarterOfYear";
   import updateLocale from "dayjs/plugin/updateLocale";
@@ -13,6 +14,16 @@
   const dispatch = createEventDispatcher();
 
   export let weekStart = 0;
+  export let startContextKey;
+  export let endContextKey;
+
+  let end = getContext(endContextKey);
+  let start = getContext(startContextKey);
+
+  console.log({
+    end,
+    start,
+  });
 
   dayjs.updateLocale("en", {
     weekStart: weekStart,
@@ -68,6 +79,34 @@
     <button
       class="text-center py-3 px-6 rounded-md shadow-sm border border-gray-200 hover:shadow-md transition-all text-sm font-semibold"
       on:click={() => {
+        if (
+          dayjs(filters[filter].start).get("M") ===
+          dayjs(filters[filter].end).get("M")
+        ) {
+          end.displayedDate.update((v) =>
+            v.month(dayjs(filters[filter].start).get("M"))
+          );
+        } else {
+          console.log({
+            start: dayjs(filters[filter].start).year(),
+            end: dayjs(filters[filter].end).year(),
+          });
+          start.displayedDate.update((v) =>
+            v.year(dayjs(filters[filter].start).year())
+          );
+
+          end.displayedDate.update((v) =>
+            v.year(dayjs(filters[filter].end).year())
+          );
+          start.displayedDate.update((v) =>
+            v.month(dayjs(filters[filter].start).get("M"))
+          );
+
+          end.displayedDate.update((v) =>
+            v.month(dayjs(filters[filter].end).get("M"))
+          );
+        }
+
         dispatch("commonFilterSelected", {
           start: dayjs(filters[filter].start).format(),
           end: dayjs(filters[filter].end).format(),

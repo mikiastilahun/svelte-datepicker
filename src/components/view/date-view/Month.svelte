@@ -1,11 +1,11 @@
 <script>
   import Week from "./Week.svelte";
   import { getContext } from "svelte";
-  import updateLocale from "dayjs/plugin/updateLocale";
+  // import updateLocale from "dayjs/plugin/updateLocale";
 
   import { dayjs } from "../../lib/date-utils.js";
 
-  dayjs.extend(updateLocale);
+  // dayjs.extend(updateLocale);
 
   export let viewContextKey;
   export let id;
@@ -19,11 +19,11 @@
     direction = lastId < id ? 1 : -1;
     lastId = id;
   }
-  export let weekStart = 0;
+  // export let weekStart = 0;
 
-  dayjs.updateLocale("en", {
-    weekStart: weekStart,
-  });
+  // dayjs.updateLocale("en", {
+  //   weekStart: weekStart,
+  // });
 </script>
 
 <div class="month-container">

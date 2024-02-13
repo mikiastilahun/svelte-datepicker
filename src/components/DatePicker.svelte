@@ -8,6 +8,7 @@
   import Toolbar from "./Toolbar.svelte";
   import View from "./view/View.svelte";
   import CommonlyUsedFitlers from "./view/CommonlyUsedFitlers.svelte";
+  import { weekStartStore } from "./lib/week-start";
 
   export let range = false;
   export let defaultRange = [1, "month"];
@@ -27,6 +28,8 @@
   export let continueText = "Continue";
   export let cancelText = "Cancel";
   export let weekStart = 0;
+
+  weekStartStore.set(weekStart);
 
   const dispatch = createEventDispatcher();
 
@@ -48,6 +51,7 @@
   };
 
   setContext(contextKey, setup(selected, config));
+  setContext("weekStart", weekStart);
   const {
     selectedStartDate,
     selectedEndDate,
@@ -169,6 +173,8 @@
       </div>
       <div class="commonlyUsedFilter">
         <CommonlyUsedFitlers
+          {startContextKey}
+          {endContextKey}
           {weekStart}
           on:commonFilterSelected={(e) => {
             selectedStartDate.set(dayjs(e.detail.start));
